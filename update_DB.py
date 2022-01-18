@@ -2,21 +2,24 @@
 import os
 import sys
 import time
-from typing import Generator
+
 from deta import Deta
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 db = Deta(os.environ['KEY']).Base(os.environ['NAME_DB'])
 
 
-def read_urls_from_file() -> Generator[str]:
-    with open('C:\processed_urls', 'r') as f:
+def read_urls_from_file():
+    with open('C:\data\data.csv', 'r') as f:
         yield from f.readlines()
     
 
 def update_DB(url) -> None:
     updates = {
-        'status_url':  'processed',
+        'status_url':  'need_to_check',
     }
     db.update(updates, key=url)
 
@@ -30,7 +33,7 @@ def main():
             update_DB(url)
             counter += 1
             print(counter)
-            time.sleep(3)
+            time.sleep(0.01)
     except:
         sys.exit()
 

@@ -4,8 +4,6 @@ env
 config.py
 *.pyc
 .vscode
-workspace_data
-initial_data
 cookies.pkl
 __pycache__
 geckidriver.log
