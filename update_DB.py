@@ -3,41 +3,36 @@ import os
 import sys
 import time
 
-from deta import Deta
+import pymongo
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
-db = Deta(os.environ['KEY']).Base(os.environ['NAME_DB'])
+
+SERVER = os.environ['SERVER']
+
+client = pymongo.MongoClient(SERVER, serverSelectionTimeoutMS=5000)
+db = client.records_DB
+urls = db.urls
+
+
+def update_DB(list_2: list):
+    urls.insert_one({'url': list_2})
 
 
 def read_urls_from_file():
     with open('C:\data\data.csv', 'r') as f:
-        yield from f.readlines()
-    
-
-def update_DB(url) -> None:
-    updates = {
-        'status_url':  'need_to_check',
-    }
-    db.update(updates, key=url)
+        return f.readlines()
 
 
 def main():
-    counter = 0
-    urls = read_urls_from_file()
-    try:
-        while any(urls):
-            url = next(urls).strip()
-            update_DB(url)
-            counter += 1
-            print(counter)
-            time.sleep(0.01)
-    except:
-        sys.exit()
+    list_1 = read_urls_from_file()
+    list_2 = [url.strip('\n') for url in list_1]
+    update_DB(list_2)
+    print('finish')
+    sys.exit()
 
 
 if __name__ == '__main__':
     main()
-    

@@ -4,7 +4,8 @@ import sys
 import time
 import pickle
 
-from deta import Deta
+import pymongo
+
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.common.by import By
@@ -13,25 +14,14 @@ from bs4 import BeautifulSoup
 
 
 load_dotenv()
-db = Deta(os.environ['KEY']).Base(os.environ['NAME_DB'])
 
-
+SERVER = os.environ['SERVER']
 PATH_DRIVER = os.environ['PATH_DRIVER']
 URL = os.environ['URL']
 DOMAIN = os.environ['DOMAIN']
 
-
-def get_url():
-    urls = db.fetch([{'status_url': 'need_to_check'}], limit=10).items
-    yield from urls
-
-
-def update_DB(url) -> None:
-    updates = {
-        'status_url':  'processed',
-    }
-    db.update(updates, key=url)
-
+client = pymongo.MongoClient(SERVER, serverSelectionTimeoutMS=5000)
+db = client.records_DB
 
 service = Service(PATH_DRIVER)
 driver = webdriver.Firefox(service=service)
@@ -54,22 +44,14 @@ def safe_file(name, text) -> None:
 
 
 def main():
-    try:
-        urls = get_url()
-        while True:
-            try:
-                url = next(urls)['url']
-            except StopIteration:
-                time.sleep(1)
-                main()
-            driver.get(url)
-            text, name = parsing_data_for_file_naming()
-            safe_file(str(name[len(DOMAIN):]), text)
-            update_DB(url)
-            time.sleep(4)
-    except:
-        driver.quit()
-        sys.exit()
+    urls = db.urls.find_one()['url']
+    for url in urls:
+        driver.get(url)
+        text, name = parsing_data_for_file_naming()
+        safe_file(str(name[len(DOMAIN):]), text)
+        time.sleep(4)
+    driver.quit()
+    sys.exit()
 
 
 if __name__ == '__main__':
