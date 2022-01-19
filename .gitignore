@@ -6,4 +6,4 @@ config.py
 .vscode
 cookies.pkl
 __pycache__
-geckidriver.log
+geckodriver.log

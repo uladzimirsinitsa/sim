@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import pickle
+from typing import NoReturn
 
 import pymongo
 
@@ -43,7 +44,7 @@ def safe_file(name, text) -> None:
         file.write(text)
 
 
-def main():
+def main() -> NoReturn:
     urls = db.urls.find_one()['url']
     for url in urls:
         driver.get(url)
