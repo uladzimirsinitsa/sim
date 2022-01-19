@@ -10,4 +10,3 @@
 <p>1. Using the previously created cookies, the script log in to your account on the site.</p>
 <p>2. The script takes url from the database.</p>
 <p>3. The script requests the page, waits for the JS to load and saves the loaded page.</p>
-<p>4. Update the entry in the database.</p>
