@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import pickle
+import winsound
 
 import pymongo
 
@@ -49,9 +50,10 @@ def main() -> None:
         driver.get(url)
         try:
             text, name = parsing_data_for_file_naming()
-            print('\a')
-            time.sleep(60)
         except AttributeError:
+            winsound.Beep(370, 1000)
+            time.sleep(90)
+            pickle.dump(driver.get_cookies(), open('cookies.pkl', 'wb'))
             continue
         safe_file(name[len(DOMAIN):], text)
         time.sleep(7)
