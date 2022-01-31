@@ -3,7 +3,6 @@ import os
 import sys
 import time
 import pickle
-from typing import NoReturn
 
 import pymongo
 
@@ -40,17 +39,22 @@ def parsing_data_for_file_naming() -> tuple:
 
 
 def safe_file(name, text) -> None:
-    with open(f'C:\\Users\\God\\Desktop\\Drive\\data\\{name}', 'w', encoding="utf-8") as file:
+    with open(f'C:\data\data\{name}', 'w', encoding="utf-8") as file:
         file.write(text)
 
 
-def main() -> NoReturn:
+def main() -> None:
     urls = db.urls.find_one()['url']
     for url in urls:
         driver.get(url)
-        text, name = parsing_data_for_file_naming()
-        safe_file(str(name[len(DOMAIN):]), text)
-        time.sleep(4)
+        try:
+            text, name = parsing_data_for_file_naming()
+            print('\a')
+            time.sleep(60)
+        except AttributeError:
+            continue
+        safe_file(name[len(DOMAIN):], text)
+        time.sleep(7)
     driver.quit()
     sys.exit()
 
