@@ -51,12 +51,12 @@ def main() -> None:
         try:
             text, name = parsing_data_for_file_naming()
         except AttributeError:
-            winsound.Beep(370, 1000)
-            time.sleep(90)
+            winsound.Beep(370, 2000)
+            time.sleep(20)
             pickle.dump(driver.get_cookies(), open('cookies.pkl', 'wb'))
             continue
         safe_file(name[len(DOMAIN):], text)
-        time.sleep(7)
+        time.sleep(1)
     driver.quit()
     sys.exit()
 
